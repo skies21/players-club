@@ -1,0 +1,32 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/css/styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
+</head>
+
+<body>
+    <nav>
+        <nav>
+            <a class="nav-button" href="{% url 'home' %}">Главная</a>
+            <a class="nav-button" href="{% url 'search' %}">Поиск</a>
+            <a class="nav-button" href="{% url 'position' %}">Список позиций</a>
+            <a class="nav-button" href="{% url 'index' %}">Список игроков</a>
+            <a class="nav-button" href="{% url 'medcine' %}">Медицинский центр</a>
+            <a class="nav-button" href="{% url 'finances' %}">Финансы</a>
+        </nav>
+        {% block nav %}
+        {% endblock %}
+    </nav>
+    <main>
+        {% block content %} {% endblock %}
+    </main>
+</body>
+</html>

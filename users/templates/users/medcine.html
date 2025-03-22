@@ -1,0 +1,33 @@
+{% extends 'users/base.html' %}
+<body>
+    <h1>Медицинский центр</h1>
+</body>
+{% block nav %}
+    <a class="nav-button" href="{% url 'add_record_medcine' %}">Добавить запись в мед. центр</a>
+{% endblock %}
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Фамилия</th>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Дата получения травмы</th>
+            <th>Дата выздоровления</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ task.surname }}</td>
+            <td>{{ task.firstname }}</td>
+            <td>{{ task.patronymic }}</td>
+            <td>{{ task.injury_date }}</td>
+            <td>{{ task.recovery_date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

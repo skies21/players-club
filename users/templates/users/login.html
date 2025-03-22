@@ -1,0 +1,27 @@
+
+<div>
+    <form method="post" action="">
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if messages.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Имя пользователя:</label>
+            <input type="text" name="username" placeholder="Введите имя пользователя" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Пароль:</label>
+            <input type="password" name="password" placeholder="Введите пароль" class="form-control">
+        </div>
+        <div class="col text-center">
+            <button type="submit" class="btn btn-primary">Войти</button>
+        </div>
+    </form>
+</div>

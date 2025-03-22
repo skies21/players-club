@@ -1,0 +1,65 @@
+{% extends 'users/base.html' %}
+
+{% block content%}
+<form action="{% url 'search' %}" method="post">
+    {% csrf_token %}
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>Ошибка:</strong> Пожалуйста, проверьте введенные данные.
+        <ul>
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            <li>{{ field }}: {{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <div class="form-group">
+        <label class="small mb-1" for="{{ form.surname.id_for_label }}">Фамилия</label>
+        {{ form.surname }}
+    </div>
+    <div class="form-group">
+        <label class="small mb-1" for="{{ form.firstname.id_for_label }}">Имя</label>
+        {{ form.firstname }}
+    </div>
+
+    <div class="form-group">
+        <label class="small mb-1" for="{{ form.patronymic.id_for_label }}">Отчество</label>
+        {{ form.patronymic }}
+    </div>
+    <div class="form-group">
+        <label class="small mb-1" for="{{ form.position.id_for_label }}">Позиция</label>
+        {{ form.position }}
+    </div>
+    <div class="form-group">
+        <label class="small mb-1" for="{{ form.age.id_for_label }}">Возраст</label>
+        {{ form.age }}
+    </div>
+    <div class="form-group">
+        <label class="small mb-1" for="{{ form.cost.id_for_label }}">Стоимость</label>
+        {{ form.cost }}
+    </div>
+    <div class="form-group">
+        <label class="small mb-1" for="{{ form.expiration_date.id_for_label }}">Дата истечения контракта</label>
+        {{ form.expiration_date }}
+    </div>
+    <div class="form-group">
+        <label class="small mb-1" for="{{ form.injury_choice.id_for_label }}">Повреждение</label>
+        {{ form.injury_choice }}
+    </div>
+    <div class="form-group">
+        <label class="small mb-1" for="{{ form.injury_date.id_for_label }}">Дата получения травмы</label>
+        {{ form.injury_date }}
+    </div>
+    <div class="form-group">
+        <label class="small mb-1" for="{{ form.recovery_date.id_for_label }}">Дата выздоровления</label>
+        {{ form.recovery_date }}
+    </div>
+    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+        <input class="btn btn-primary" type="submit" value="Поиск">
+    </div>
+
+</form>
+
+{% endblock %}

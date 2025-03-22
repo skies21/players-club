@@ -1,0 +1,53 @@
+{% extends 'users/base.html' %}
+
+{% block nav %}
+    <a class="nav-button" href="{% url 'add_record' %}">Добавить игрока</a>
+{% endblock %}
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Фамилия</th>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Возраст</th>
+            <th>Позиция</th>
+            <th>Стоимость</th>
+            <th>Дата истечения контракта</th>
+            <th>Повреждение</th>
+            <th>Дата получения травмы</th>
+            <th>Дата восстановления</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ task.surname }}</td>
+            <td>{{ task.firstname }}</td>
+            <td>{{ task.patronymic }}</td>
+            <td>{{ task.age }}</td>
+            <td>{{ task.position.name }}</td>
+            <td>{{ task.cost }}</td>
+            <td>{{ task.expiration_date }}</td>
+            <td>{{ task.injury_choice }}</td>
+            <td>{{ task.injury_date }}</td>
+            <td>{{ task.recovery_date }}</td>
+            <td>
+                <form action="{% url 'delete_record' pk=task.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn delete-btn">Удалить</button>
+                </form>
+            </td>
+            <td>
+                <form action="{% url 'edit_record' pk=task.pk %}" method="get">
+                    <button type="submit" class="btn edit-btn">Изменить</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

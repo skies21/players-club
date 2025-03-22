@@ -1,0 +1,37 @@
+{% extends 'users/base.html' %}
+
+{% block nav %}
+<nav>
+    <a class="nav-button" href="{% url 'add_record_position' %}">Добавить позицию</a>
+</nav>
+{% endblock %}
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Позиция</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ task.name }}</td>
+            <td class="button-cell">
+                <form action="{% url 'delete_record_position' pk=task.pk %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn delete-btn" type="submit">Удалить</button>
+                </form>
+            </td>
+            <td class="button-cell">
+                <form action="{% url 'edit_record_position' pk=task.pk %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn edit-btn" type="submit">Изменить</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

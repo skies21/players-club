@@ -1,0 +1,53 @@
+{% extends 'users/base.html' %}
+
+<body>
+    {% block nav%}
+    <ul class="nav-list">
+        <li><a class="nav-button" href="{% url 'index' %}">Назад</a></li>
+    </ul>
+    {% endblock %}
+
+    {% block content%}
+    {% if results %}
+    <h2>Результаты поиска</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Отчество</th>
+                <th>Возраст</th>
+                <th>Позиция</th>
+                <th>Стоимость</th>
+                <th>Дата истечения контракта</th>
+                <th>Повреждение</th>
+                <th>Дата получения травмы</th>
+                <th>Дата выздоровления</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ result.surname }}</td>
+                <td>{{ result.firstname }}</td>
+                <td>{{ result.patronymic }}</td>
+                <td>{{ result.age }}</td>
+                <td>{{ result.position.name }}</td>
+                <td>{{ result.cost }}</td>
+                <td>{{ result.expiration_date }}</td>
+                <td>{{ result.injury_choice }}</td>
+                <td>{{ result.injury_date }}</td>
+                <td>{{ result.recovery_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        {% else %}
+        <p>Ничего не найдено</p>
+        {% endif %}
+        {% endblock %}
+</body>
+
+</html>

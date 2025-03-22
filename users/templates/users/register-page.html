@@ -1,0 +1,20 @@
+<form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Имя пользователя:</label>
+        <input type="text" name="username" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Пароль:</label>
+        <input type="password" name="password1" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Подтвердите пароль:</label>
+        <input type="password" name="password2" class="form-control">
+    </div>
+    <div class="col text-center">
+        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+    </div>
+</form>
