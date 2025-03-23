@@ -3,17 +3,14 @@ from django.urls import path
 from . import views
 from playersclub.views import IndexView, SearchView, AddRecordView, EditRecordView, IndexPositionView, \
     EditRecordPositionView, AddRecordPositionView, delete_record, delete_record_position, HomeView, \
-    AddRecordMedcineView, EditRecordMedcineView, MedcineView, FinancesView, LoginView, LogoutView, \
-    DeleteRecordMedcineView
+    AddRecordMedcineView, EditRecordMedcineView, MedcineView, FinancesView, DeleteRecordMedcineView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomeView.as_view(), name='home'),
-    path('', views.loginPage, name='login'),
-    # path('home/', HomeView.as_view(), name='home'),
-    # path('', views.registerPage, name='register'),
-    # path('login/', views.loginPage, name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path("register/", views.register_view, name="register"),
+    path("login/", views.login_view, name="login"),
+    path("logout/", views.logout_view, name="logout"),
     path('index/', IndexView.as_view(), name='index'),
     path('position/', IndexPositionView.as_view(), name='position'),
     path('search/', SearchView.as_view(), name='search'),

@@ -1,9 +1,7 @@
 {% extends 'users/base.html' %}
 
-{% block nav %}
-    <a class="nav-button" href="{% url 'add_record' %}">Добавить игрока</a>
-{% endblock %}
 {% block content %}
+<a class="nav-button" style="margin-left: 40px" href="{% url 'add_record' %}">Добавить игрока</a>
 <table>
     <thead>
         <tr>

@@ -1,10 +1,7 @@
 {% extends 'users/base.html' %}
 
-{% block nav %}
-    <a class="nav-button" href="{% url 'add_record_medcine' %}">Добавить запись в мед. центр</a>
-{% endblock %}
-
 {% block content %}
+<a class="nav-button" style="margin-left: 40px" href="{% url 'add_record_medcine' %}">Добавить запись в мед. центр</a>
 <table>
     <thead>
         <tr>

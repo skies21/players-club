@@ -1,20 +1,15 @@
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView
 from django.views import View
-from django.db.models import Q
 from django.urls import reverse_lazy
 from django.db.models import Sum
-from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import TemplateView
-from django.contrib.auth.models import User
 from django.contrib import messages
 
-from users.forms import PlayerForm, EditForm, EditPositionForm, PositionForm, MedcineForm
-from users.models import Player, Position, Medcine, FullName
+from users.forms import PlayerForm, EditForm, EditPositionForm, PositionForm, MedcineForm, RegisterForm
+from users.models import Player, Position, Medcine
 
 class IndexView(TemplateView):
     template_name = 'users/index.html'
@@ -268,42 +263,37 @@ class FinancesView(View):
         return render(request, 'users/finances.html', context)
 
 
-def loginPage(request):
+def register_view(request):
     if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        try:
-            user = User.objects.get(username=username)
-        except:
-            messages.error(request, "Такого пользователя не существует и/или пароль неверный")
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('users/home.html')
-        else:
-            messages.error(request, "Такого пользователя не существует и/или пароль неверный")
-    context = {}
-    return render(request, 'users/login.html', context)
-
-
-def registerPage(request):
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
-
+        form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=password)
             login(request, user)
-            return redirect('users/login.html')
-
+            messages.success(request, "Регистрация прошла успешно!")
+            return redirect("home")
+        else:
+            messages.error(request, "Ошибка регистрации. Проверьте данные.")
     else:
-        form = UserCreationForm()
+        form = RegisterForm()
+    return render(request, "users/register.html", {"form": form})
 
-    context = {'form': form}
 
-    return render(request, 'users/register-page.html', context)
+def login_view(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, "Вы успешно вошли!")
+            return redirect("home")
+        else:
+            messages.error(request, "Ошибка входа. Проверьте логин и пароль.")
+    else:
+        form = AuthenticationForm()
+    return render(request, "users/login.html", {"form": form})
 
-class LogoutView(LogoutView):
-    next_page = reverse_lazy('login')
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Вы вышли из системы.")
+    return redirect("home")

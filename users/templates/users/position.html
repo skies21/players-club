@@ -1,11 +1,7 @@
 {% extends 'users/base.html' %}
 
-{% block nav %}
-<nav>
-    <a class="nav-button" href="{% url 'add_record_position' %}">Добавить позицию</a>
-</nav>
-{% endblock %}
 {% block content %}
+<a class="nav-button" style="margin-left: 40px" href="{% url 'add_record_position' %}">Добавить позицию</a>
 <table>
     <thead>
         <tr>

@@ -1,13 +1,7 @@
 {% extends 'users/base.html' %}
 
-{% block nav %}
-<nav>
-    <a class="nav-button" href="{% url 'index' %}">Назад</a>
-</nav>
-{% endblock %}
-
-
 {% block content %}
+<a class="nav-button" style="margin-left: 40px" href="{% url 'index' %}">Назад</a>
 <form action="{% url 'add_record' %}" method="post">
     {% csrf_token %}
     {% if form.errors %}
