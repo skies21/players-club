@@ -1,5 +1,6 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.edit import UpdateView
 from django.views import View
@@ -11,8 +12,13 @@ from django.contrib import messages
 from users.forms import PlayerForm, EditForm, EditPositionForm, PositionForm, MedcineForm, RegisterForm
 from users.models import Player, Position, Medcine
 
-class IndexView(TemplateView):
+
+class IndexView(UserPassesTestMixin, TemplateView):
     template_name = 'users/index.html'
+    success_url = 'users/index.html'
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_director() or self.request.user.is_coach()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -27,9 +33,12 @@ class IndexView(TemplateView):
         else:
             return render(request, self.template_name, {'form': form})
 
-class SearchView(View):
+class SearchView(UserPassesTestMixin, View):
     template_name = 'users/search.html'
     results_template_name = 'users/search_result.html'
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_director() or self.request.user.is_coach()
 
     def get(self, request, *args, **kwargs):
         form = PlayerForm()
@@ -130,8 +139,11 @@ def delete_record(request, pk):
     record.delete()
     return redirect('index')
 
-class IndexPositionView(TemplateView):
+class IndexPositionView(UserPassesTestMixin, TemplateView):
     template_name = 'users/position.html'
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_director() or self.request.user.is_coach()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -182,8 +194,12 @@ class HomeView(View):
         return render(request, 'users/home.html')
 
 
-class MedcineView(TemplateView):
+class MedcineView(UserPassesTestMixin, TemplateView):
     template_name = 'users/medcine.html'
+    success_url = 'users/medcine.html'
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_director() or self.request.user.is_coach()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -230,30 +246,16 @@ class DeleteRecordMedcineView(View):
         return redirect(reverse_lazy('medcine'))
 
 
-'''class FinancesView(TemplateView):
-    template_name = 'users/finances.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['tasks'] = Player.objects.all
-        return context
-
-    def post(self, request, *args, **kwargs):
-        form = FinancesForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect(self.success_url)
-        else:
-            return render(request, self.template_name, {'form': form})'''
-
-
 def calculate_total_cost():
     total_cost = Player.objects.aggregate(total_cost=Sum('cost'))['total_cost']
     return total_cost
 
 
-class FinancesView(View):
+class FinancesView(UserPassesTestMixin, View):
     template_name = 'users/finances.html'
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_director()
 
     def get(self, request):
         total_cost = calculate_total_cost()

@@ -1,9 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import User
 from django.forms import DateInput
 
-from users.models import Player, Position, Medcine, injury_choices
+from users.models import Player, Position, Medcine, CustomUser
 import datetime
 
 
@@ -71,8 +70,11 @@ class MedcineForm(forms.ModelForm):
     def clean_recovery_date(self):
         injury_date = self.cleaned_data.get('injury_date')
         recovery_date = self.cleaned_data.get('recovery_date')
-        if recovery_date < injury_date:
-            raise forms.ValidationError("Дата выздоровления не может быть раньше даты получения травмы!")
+
+        if injury_date and recovery_date:
+            if recovery_date < injury_date:
+                raise forms.ValidationError("Дата выздоровления не может быть раньше даты получения травмы!")
+
         return recovery_date
 
 
@@ -102,7 +104,7 @@ class RegisterForm(UserCreationForm):
     )
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ["username", "email", "password1", "password2"]
 
 

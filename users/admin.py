@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Position, Player, FullName, Medcine
+
+from .models import Position, Player, FullName, Medcine, CustomUser
+
 
 class PositionAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
@@ -24,3 +26,4 @@ admin.site.register(Position, PositionAdmin)
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(FullName, FullNameAdmin)
 admin.site.register(Medcine, MedcineAdmin)
+admin.site.register(CustomUser)

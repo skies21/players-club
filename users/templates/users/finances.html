@@ -1,7 +1,18 @@
 {% extends 'users/base.html' %}
-<body>
-    <h1>Финансы</h1>
-    <p>Общая стоимость игроков: {{ total_cost }} рублей</p>
-    
-    <!-- Add more content or sections as needed -->
-</body>
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center text-white">Финансовая информация</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card" style="background-color: #2a2a2a; color: white; border-radius: 8px;">
+                <div class="card-body text-center">
+                    <h2 class="card-title">Общая стоимость игроков</h2>
+                    <p class="card-text display-4" style="font-size: 3rem; font-weight: bold;">{{ total_cost }} рублей</p>
+                    <p style="color: white;">Эти данные основываются на расчетах стоимости всех игроков клуба.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

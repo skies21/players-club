@@ -32,18 +32,28 @@
     <nav>
         <nav>
             <a class="nav-button" href="{% url 'home' %}">Главная</a>
-            <a class="nav-button" href="{% url 'search' %}">Поиск</a>
-            <a class="nav-button" href="{% url 'position' %}">Список позиций</a>
-            <a class="nav-button" href="{% url 'index' %}">Список игроков</a>
-            <a class="nav-button" href="{% url 'medcine' %}">Медицинский центр</a>
-            <a class="nav-button" href="{% url 'finances' %}">Финансы</a>
+            {% if user.is_authenticated %}
+                {% if user.role == 'director' %}
+                    <a class="nav-button" href="{% url 'finances' %}">Финансы</a>
+                    <a class="nav-button" href="{% url 'search' %}">Поиск</a>
+                    <a class="nav-button" href="{% url 'index' %}">Список игроков</a>
+                    <a class="nav-button" href="{% url 'position' %}">Список позиций</a>
+                    <a class="nav-button" href="{% url 'medcine' %}">Медицинский центр</a>
+                {% elif user.role == 'coach' %}
+                    <a class="nav-button" href="{% url 'search' %}">Поиск</a>
+                    <a class="nav-button" href="{% url 'index' %}">Список игроков</a>
+                    <a class="nav-button" href="{% url 'position' %}">Список позиций</a>
+                    <a class="nav-button" href="{% url 'medcine' %}">Медицинский центр</a>
+                {% elif user.role == 'guest' %}
+                {% endif %}
+            {% endif %}
             <div class="auth-block d-flex align-items-center">
                 {% if user.is_authenticated %}
                     <span class="text-white me-3">Привет, {{ user.username }}</span>
                     <a class="nav-button btn btn-outline-light" href="{% url 'logout' %}">Выход</a>
                 {% else %}
                     <a class="nav-button btn btn-outline-light me-2" href="{% url 'login' %}">Вход</a>
-                    <a class="nav-button btn btn-primary" href="{% url 'register' %}">Регистрация</a>
+                    <a class="nav-button btn btn-outline-light me-2" href="{% url 'register' %}">Регистрация</a>
                 {% endif %}
             </div>
         </nav>
