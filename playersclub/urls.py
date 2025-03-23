@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-from playersclub.views import IndexView, SearchView, AddRecordView, EditRecordView, IndexPositionView, EditRecordPositionView, AddRecordPositionView, delete_record, delete_record_position, HomeView, delete_record_medcine, AddRecordMedcineView, EditRecordMedcineView, MedcineView, FinancesView, LoginView, LogoutView
-
+from playersclub.views import IndexView, SearchView, AddRecordView, EditRecordView, IndexPositionView, \
+    EditRecordPositionView, AddRecordPositionView, delete_record, delete_record_position, HomeView, \
+    AddRecordMedcineView, EditRecordMedcineView, MedcineView, FinancesView, LoginView, LogoutView, \
+    DeleteRecordMedcineView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,10 +27,10 @@ urlpatterns = [
          name='add_record_position'),
     path('edit_record/<int:pk>/', EditRecordView.as_view(), name='edit_record'),
     path('edit_record_position/<int:pk>/', EditRecordPositionView.as_view(), name='edit_record_position'),
-    path('edit_record_medcine/<int:pk>/', EditRecordMedcineView.as_view(), name='edit_record_medcine'),
     path('add_record_medcine/', AddRecordMedcineView.as_view(),
          name='add_record_medcine'),
     path('medcine/', MedcineView.as_view(), name='medcine'),
-    path('delete_record_medcine/<int:pk>/', delete_record_medcine, name='delete_record_medcine'),
+    path('medcine/edit/<int:pk>/', EditRecordMedcineView.as_view(), name='edit_record_medcine'),
+    path('medcine/delete/<int:pk>/', DeleteRecordMedcineView.as_view(), name='delete_record_medcine'),
     path('finances/', FinancesView.as_view(), name='finances'),
 ]

@@ -62,14 +62,9 @@ class MedcineForm(forms.ModelForm):
         model = Medcine
         fields = ['full_name', 'injury', 'injury_date', 'recovery_date']
         widgets = {
-            'injury_date': DateInput(attrs={'type': 'date', 'class': 'datepicker'}),
-            'recovery_date': DateInput(attrs={'type': 'date', 'class': 'datepicker'}),
+            'injury_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'recovery_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
-
-    full_name = forms.ModelChoiceField(queryset=Player.objects.all(), required=True)
-    injury = forms.CharField(max_length=40, required=True)
-    injury_date = forms.DateField(required=True, input_formats=['%d.%m.%Y'])
-    recovery_date = forms.DateField(required=True, input_formats=['%d.%m.%Y'])
 
     def clean_recovery_date(self):
         injury_date = self.cleaned_data.get('injury_date')

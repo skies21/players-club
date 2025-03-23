@@ -186,12 +186,13 @@ class HomeView(View):
     def get(self, request):
         return render(request, 'users/home.html')
 
+
 class MedcineView(TemplateView):
     template_name = 'users/medcine.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['tasks'] = Player.objects.filter(injury_choice='да')
+        context['tasks'] = Medcine.objects.all()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -202,9 +203,9 @@ class MedcineView(TemplateView):
         else:
             return render(request, self.template_name, {'form': form})
 
+
 class AddRecordMedcineView(View):
     template_name = 'users/add_record_medcine.html'
-    success_url = 'users/medcine.html'
 
     def get(self, request):
         form = MedcineForm()
@@ -213,40 +214,26 @@ class AddRecordMedcineView(View):
     def post(self, request):
         form = MedcineForm(request.POST)
         if form.is_valid():
-            # Проверяем и создаем новые значения в соответствующих таблицах, если они отсутствуют
-            fields_to_check = ['full_name']
-            for field in fields_to_check:
-                value = form.cleaned_data[field]
-                model_class = globals()[field.capitalize()]
-                model_class.objects.get_or_create(name=value)
-
-            # Создаем запись в основной таблице
-            main_fields = {
-                'full_name': FullName.objects.get(name=form.cleaned_data['full_name']),
-                'injury': form.cleaned_data['injury'],
-                'injury_date': form.cleaned_data['injury_date'],
-                'recovery_date': form.cleaned_data['recovery_date'],
-            }
-            Medcine.objects.create(**main_fields)
-
-            return redirect('medcine')
+            form.save()
+            messages.success(request, "Запись успешно добавлена!")
+            return redirect(reverse_lazy('medcine'))
         return render(request, self.template_name, {'form': form})
 
+
 class EditRecordMedcineView(UpdateView):
-    template_name = 'users/edit_record_medcine.html'
     model = Medcine
-    form_class = EditForm
-    success_message = 'Запись обновлена!'
+    form_class = MedcineForm
+    template_name = 'users/edit_record_medcine.html'
     success_url = reverse_lazy('medcine')
-
-    def get_object(self, queryset=None):
-        return get_object_or_404(Medcine, pk=self.kwargs['pk'])
+    success_message = 'Запись успешно обновлена!'
 
 
-def delete_record_medcine(request, pk):
-    record = Medcine.objects.get(pk=pk)
-    record.delete()
-    return redirect('medcine')
+class DeleteRecordMedcineView(View):
+    def get(self, request, pk):
+        record = get_object_or_404(Medcine, pk=pk)
+        record.delete()
+        return redirect(reverse_lazy('medcine'))
+
 
 '''class FinancesView(TemplateView):
     template_name = 'users/finances.html'
@@ -268,6 +255,7 @@ def delete_record_medcine(request, pk):
 def calculate_total_cost():
     total_cost = Player.objects.aggregate(total_cost=Sum('cost'))['total_cost']
     return total_cost
+
 
 class FinancesView(View):
     template_name = 'users/finances.html'

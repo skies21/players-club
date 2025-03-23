@@ -35,16 +35,9 @@
             <td>{{ task.injury_choice }}</td>
             <td>{{ task.injury_date }}</td>
             <td>{{ task.recovery_date }}</td>
-            <td>
-                <form action="{% url 'delete_record' pk=task.pk %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn delete-btn">Удалить</button>
-                </form>
-            </td>
-            <td>
-                <form action="{% url 'edit_record' pk=task.pk %}" method="get">
-                    <button type="submit" class="btn edit-btn">Изменить</button>
-                </form>
+            <td class="button-cell">
+                <a class="btn delete-btn" href="{% url 'delete_record' pk=task.pk %}" type="submit">Удалить</a>
+                <a class="btn edit-btn" href="{% url 'edit_record' pk=task.pk %}" type="submit">Изменить</a>
             </td>
         </tr>
         {% endfor %}

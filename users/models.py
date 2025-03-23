@@ -42,8 +42,8 @@ class FullName(models.Model):
 class Medcine(models.Model):
     full_name = models.ForeignKey(to=Player, on_delete=models.CASCADE)
     injury = models.CharField(max_length=40)
-    injury_date = models.CharField(max_length=16, default='01.01.2031')
-    recovery_date = models.CharField(max_length=16, default='01.01.2031')
+    injury_date = models.DateField(default='2031-01-01')
+    recovery_date = models.DateField(default='2031-01-01')
 
 
     def __str__(self):

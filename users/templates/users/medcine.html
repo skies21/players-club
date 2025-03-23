@@ -1,10 +1,9 @@
 {% extends 'users/base.html' %}
-<body>
-    <h1>Медицинский центр</h1>
-</body>
+
 {% block nav %}
     <a class="nav-button" href="{% url 'add_record_medcine' %}">Добавить запись в мед. центр</a>
 {% endblock %}
+
 {% block content %}
 <table>
     <thead>
@@ -15,17 +14,22 @@
             <th>Отчество</th>
             <th>Дата получения травмы</th>
             <th>Дата выздоровления</th>
+            <th>Действия</th>
         </tr>
     </thead>
     <tbody>
         {% for task in tasks %}
         <tr>
             <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ task.surname }}</td>
-            <td>{{ task.firstname }}</td>
-            <td>{{ task.patronymic }}</td>
+            <td>{{ task.full_name.surname }}</td>
+            <td>{{ task.full_name.firstname }}</td>
+            <td>{{ task.full_name.patronymic }}</td>
             <td>{{ task.injury_date }}</td>
             <td>{{ task.recovery_date }}</td>
+            <td>
+                <a class="btn edit-btn" href="{% url 'edit_record_medcine' pk=task.pk %}">Изменить</a>
+                <a class="btn delete-btn" href="{% url 'delete_record_medcine' pk=task.pk %}">Удалить</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
