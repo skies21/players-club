@@ -32,6 +32,7 @@
     <nav>
         <nav>
             <a class="nav-button" href="{% url 'home' %}">Главная</a>
+            <a class="nav-button" href="{% url 'shop' %}">Магазин</a>
             {% if user.is_authenticated %}
                 {% if user.role == 'director' %}
                     <a class="nav-button" href="{% url 'finances' %}">Финансы</a>

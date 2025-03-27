@@ -1,0 +1,28 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Магазин мерча</h1>
+    <div class="row mt-4">
+        {% for product in products %}
+        <div class="col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                {% else %}
+                <img src="https://via.placeholder.com/300" class="card-img-top" alt="Нет изображения">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+                    <p class="card-text"><strong>{{ product.price }} ₽</strong></p>
+                    <button class="btn btn-warning w-100" style="background: #ff6600;">Купить</button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">Товары пока не добавлены.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

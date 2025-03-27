@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from . import views
 from playersclub.views import IndexView, SearchView, AddRecordView, EditRecordView, IndexPositionView, \
     EditRecordPositionView, AddRecordPositionView, delete_record, delete_record_position, HomeView, \
@@ -8,6 +8,7 @@ from playersclub.views import IndexView, SearchView, AddRecordView, EditRecordVi
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomeView.as_view(), name='home'),
+    path('', include('shop.urls')),
     path("register/", views.register_view, name="register"),
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
