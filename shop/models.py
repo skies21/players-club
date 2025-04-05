@@ -34,14 +34,27 @@ class CartItem(models.Model):
 
 class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    items = models.ManyToManyField(CartItem)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.IntegerField()
     full_name = models.CharField(max_length=100)
     email = models.EmailField()
     delivery_method = models.CharField(max_length=50, choices=[('pickup', 'Самовывоз'), ('delivery', 'Доставка')])
     address = models.TextField(blank=True, null=True)
     payment_method = models.CharField(max_length=50, choices=[('sbp', 'СБП'), ('sber', 'Sber Pay'), ('card', 'Банковская карта')])
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Заказ #{self.pk} от {self.full_name}"
+
+
+class OrderedItem(models.Model):
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='ordered_items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    size = models.CharField(max_length=5, choices=[('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL')])
+    price = models.IntegerField()
+
+    def total_price(self):
+        return self.quantity * self.price
 
 
 class Match(models.Model):
@@ -52,3 +65,28 @@ class Match(models.Model):
 
     def __str__(self):
         return f'{self.team1} vs {self.team2} - {self.match_date}'
+
+
+class Sector(models.Model):
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name='sectors')
+    name = models.CharField(max_length=100, verbose_name="Название сектора")
+    image = models.ImageField(upload_to='sectors/', null=True, blank=True, verbose_name="Изображение сектора")
+    price = models.IntegerField(verbose_name="Цена билета")
+    total_seats = models.PositiveIntegerField(default=100, verbose_name="Всего мест")
+
+    def __str__(self):
+        return f"{self.name} — {self.match}"
+
+
+class SeatReservation(models.Model):
+    sector = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='reservations')
+    seat_number = models.PositiveIntegerField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    reserved_at = models.DateTimeField(auto_now_add=True)
+    order = models.ForeignKey('Order', null=True, blank=True, on_delete=models.SET_NULL, related_name='seats')
+
+    class Meta:
+        unique_together = ('sector', 'seat_number')
+
+    def __str__(self):
+        return f"Место {self.seat_number} — {self.user} — {self.sector}"

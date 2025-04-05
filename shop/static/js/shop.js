@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('.add-to-cart-form').on('submit', function(e) {
+    $('.add-to-cart-form[data-product-id]').on('submit', function(e) {
         e.preventDefault();
 
         let form = $(this);

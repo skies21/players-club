@@ -1,6 +1,11 @@
 {% extends 'users/base.html' %}
 
 {% block content %}
+<div class="position-sticky top-0 z-index-sticky" style="margin-right: 40px">
+    <a href="{% url 'cart' %}" class="nav-button position-absolute top-0 end-0 m-3">
+        <i class="fas fa-shopping-cart"> Корзина</i>
+    </a>
+</div>
 <div class="container mt-5">
     <h2 class="text-white mb-4">Расписание матчей</h2>
 
@@ -20,7 +25,7 @@
                         <a href="{% url 'edit_match' match.id %}" class="nav-button small-btn" style="background: #ffcc00; color: black;">Редактировать</a>
                         <a href="{% url 'delete_match' match.id %}" class="nav-button small-btn" style="background: #ff4444;">Удалить</a>
                     {% endif %}
-                    <a href="#" class="nav-button small-btn">Купить билеты</a>
+                    <a href="{% url 'match_sectors' match.id %}" class="nav-button small-btn">Купить билеты</a>
                 </div>
             </div>
         {% empty %}

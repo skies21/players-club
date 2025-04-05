@@ -1,0 +1,33 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="position-sticky top-0 z-index-sticky" style="margin-right: 40px">
+    <a href="{% url 'cart' %}" class="nav-button position-absolute top-0 end-0 m-3">
+        <i class="fas fa-shopping-cart"> Корзина</i>
+    </a>
+</div>
+<div class="container mt-5">
+    <h2 class="text-white mb-4">Выбор места — {{ sector.name }}</h2>
+    <form method="post" action="{% url 'add_seat_to_cart' sector.id %}">
+        {% csrf_token %}
+        <label for="seat">Выберите место (1–{{ sector.total_seats }}):</label>
+        <select name="seat_number" id="seat" class="form-control mb-3">
+            {% for seat in all_seats %}
+                <option value="{{ seat }}" {% if seat in taken_seats %}disabled{% endif %}>
+                    Место {{ seat }}{% if seat in taken_seats %} — Занято{% endif %}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="nav-button">Добавить в корзину</button>
+    </form>
+</div>
+
+<script>
+    {% if messages %}
+        {% for message in messages %}
+            toastr["{{ message.level_tag }}"]("{{ message.message }}");
+        {% endfor %}
+    {% endif %}
+</script>
+
+{% endblock %}

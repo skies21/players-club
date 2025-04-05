@@ -1,0 +1,33 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="position-sticky top-0 z-index-sticky" style="margin-right: 40px">
+    <a href="{% url 'cart' %}" class="nav-button position-absolute top-0 end-0 m-3">
+        <i class="fas fa-shopping-cart"> Корзина</i>
+    </a>
+</div>
+<div class="container mt-5">
+    <h2 class="text-white mb-4">Секторы для матча: {{ match.team1 }} vs {{ match.team2 }}</h2>
+
+    <div class="row">
+        {% for sector in sectors %}
+            <div class="col-md-4 mb-4">
+                <div class="card bg-dark text-white mb-4">
+                    {% if sector.image %}
+                        <img src="{{ sector.image.url }}" class="card-img-top" alt="{{ sector.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300" class="card-img-top" alt="Нет изображения">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">Сектор {{ sector.name }}</h5>
+                        <p class="card-text"><strong>Цена:</strong> {{ sector.price }} ₽</p>
+                        <a href="{% url 'select_seat' sector.id %}" class="nav-button">Выбрать места</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-white">Нет доступных секторов для этого матча.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

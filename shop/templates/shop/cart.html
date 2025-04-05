@@ -6,6 +6,7 @@
 
     {% if cart_items %}
         <div class="table-responsive">
+        <h4 class="mt-5">Товары:</h4>
             <table class="custom-cart-table">
                 <thead>
                     <tr>
@@ -32,6 +33,38 @@
                     {% endfor %}
                 </tbody>
             </table>
+
+            {% if seat_reservations %}
+                <h4 class="mt-5">Забронированные места:</h4>
+                <div class="table-responsive">
+                    <table class="custom-cart-table">
+                        <thead>
+                            <tr>
+                                <th>Матч</th>
+                                <th>Сектор</th>
+                                <th>Место</th>
+                                <th>Цена</th>
+                                <th>Удалить</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for seat in seat_reservations %}
+                            <tr>
+                                <td>{{ seat.sector.match.team1 }} - {{ seat.sector.match.team2 }}</td>
+                                <td>{{ seat.sector.name }}</td>
+                                <td>{{ seat.seat_number }}</td>
+                                <td>{{ seat.sector.price }} ₽</td>
+                                <td>
+                                    <a href="{% url 'remove_seat_from_cart' seat.id %}" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash-alt"></i> Удалить
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
         </div>
 
         <div class="d-flex justify-content-between align-items-center mt-4">

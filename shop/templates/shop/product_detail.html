@@ -28,7 +28,7 @@
             <p>{{ product.description }}</p>
             <p><strong>Цена: {{ product.price }} ₽</strong></p>
 
-            <form action="{% url 'add_to_cart' product.id %}" method="post" class="add-to-cart-form" style="text-align: left;">
+            <form action="{% url 'add_to_cart' product.id %}" method="post" class="add-to-cart-form" data-product-id="{{ product.id }}" style="text-align: left;">
                 {% csrf_token %}
                 <label for="size">Выберите размер:</label>
                 <select name="size" id="size" class="form-control mb-3">

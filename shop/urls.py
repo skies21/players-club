@@ -16,6 +16,11 @@ urlpatterns = [
     path('add_match/', views.add_match, name='add_match'),
     path('edit_match/<int:match_id>/', views.edit_match, name='edit_match'),
     path('delete_match/<int:match_id>/', views.delete_match, name='delete_match'),
+
+    path('match/<int:match_id>/sectors/', views.match_sectors, name='match_sectors'),
+    path('sector/<int:sector_id>/seats/', views.select_seat, name='select_seat'),
+    path('cart/add-seat/<int:sector_id>/', views.add_seat_to_cart, name='add_seat_to_cart'),
+    path('cart/remove-seat/<int:seat_id>/', views.remove_seat_from_cart, name='remove_seat_from_cart'),
 ]
 
 if settings.DEBUG:
