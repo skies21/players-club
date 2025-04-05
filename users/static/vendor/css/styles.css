@@ -292,3 +292,16 @@ tr:hover {
 .d-flex .btn-warning:hover {
     background-color: #cc5200;
 }
+
+.match-card {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: 0.3s;
+}
+
+.match-card:hover {
+    background-color: #333;
+}

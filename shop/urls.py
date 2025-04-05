@@ -11,6 +11,11 @@ urlpatterns = [
     path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('cart/remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('checkout/', views.checkout, name='checkout'),
+
+    path('matches/', views.match_schedule, name='match_schedule'),
+    path('add_match/', views.add_match, name='add_match'),
+    path('edit_match/<int:match_id>/', views.edit_match, name='edit_match'),
+    path('delete_match/<int:match_id>/', views.delete_match, name='delete_match'),
 ]
 
 if settings.DEBUG:

@@ -4,7 +4,9 @@ from django.http import JsonResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView
-from .models import Product, CartItem, Order
+
+from .forms import MatchForm
+from .models import Product, CartItem, Order, Match
 
 
 class ShopView(ListView):
@@ -85,3 +87,54 @@ def checkout(request):
         return redirect('home')
     else:
         return render(request, 'shop/checkout.html')
+
+
+def match_schedule(request):
+    matches = Match.objects.all()
+    return render(request, 'shop/match_schedule.html', {'matches': matches})
+
+
+@login_required
+def add_match(request):
+    if request.user.role == 'guest':
+        return redirect('match_schedule')  # Гость не может добавлять матчи
+
+    if request.method == 'POST':
+        form = MatchForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Матч успешно добавлен!')
+            return redirect('match_schedule')
+    else:
+        form = MatchForm()
+
+    return render(request, 'shop/add_match.html', {'form': form})
+
+
+@login_required
+def edit_match(request, match_id):
+    match = get_object_or_404(Match, id=match_id)
+    if request.user.role == 'guest':
+        return redirect('match_schedule')
+
+    if request.method == 'POST':
+        form = MatchForm(request.POST, instance=match)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Матч успешно обновлен!')
+            return redirect('match_schedule')
+    else:
+        form = MatchForm(instance=match)
+
+    return render(request, 'shop/edit_match.html', {'form': form})
+
+
+@login_required
+def delete_match(request, match_id):
+    match = get_object_or_404(Match, id=match_id)
+    if request.user.role == 'guest':
+        return redirect('match_schedule')
+
+    match.delete()
+    messages.success(request, 'Матч успешно удален!')
+    return redirect('match_schedule')

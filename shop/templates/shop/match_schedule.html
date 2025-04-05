@@ -1,0 +1,31 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-white mb-4">Расписание матчей</h2>
+
+    {% if user.is_authenticated and user.role != 'guest' %}
+        <a href="{% url 'add_match' %}" class="nav-button mb-4 d-inline-block">Добавить матч</a>
+    {% endif %}
+
+    <div class="match-list">
+        {% for match in matches %}
+            <div class="match-card">
+                <h5>{{ match.team1 }} vs {{ match.team2 }}</h5>
+                <p><strong>Дата:</strong> {{ match.match_date|date:"d M Y, H:i" }}</p>
+                <p><strong>Цена билета:</strong> {{ match.ticket_price }} ₽</p>
+
+                <div class="btn-group">
+                    {% if user.is_authenticated and user.role != 'guest' %}
+                        <a href="{% url 'edit_match' match.id %}" class="nav-button small-btn" style="background: #ffcc00; color: black;">Редактировать</a>
+                        <a href="{% url 'delete_match' match.id %}" class="nav-button small-btn" style="background: #ff4444;">Удалить</a>
+                    {% endif %}
+                    <a href="#" class="nav-button small-btn">Купить билеты</a>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-white">Матчи не запланированы.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

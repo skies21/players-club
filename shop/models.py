@@ -42,3 +42,13 @@ class Order(models.Model):
     address = models.TextField(blank=True, null=True)
     payment_method = models.CharField(max_length=50, choices=[('sbp', 'СБП'), ('sber', 'Sber Pay'), ('card', 'Банковская карта')])
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Match(models.Model):
+    team1 = models.CharField(max_length=100, verbose_name='Команда 1')
+    team2 = models.CharField(max_length=100, verbose_name='Команда 2')
+    match_date = models.DateTimeField(verbose_name='Дата и время матча')
+    ticket_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена билета')
+
+    def __str__(self):
+        return f'{self.team1} vs {self.team2} - {self.match_date}'
