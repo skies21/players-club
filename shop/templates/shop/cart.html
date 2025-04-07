@@ -4,35 +4,37 @@
 <div class="container mt-5">
     <h2 class="text-center mb-4">Корзина</h2>
 
-    {% if cart_items %}
+    {% if cart_items or seat_reservations %}
         <div class="table-responsive">
-        <h4 class="mt-5">Товары:</h4>
-            <table class="custom-cart-table">
-                <thead>
-                    <tr>
-                        <th>Товар</th>
-                        <th>Размер</th>
-                        <th>Количество</th>
-                        <th>Цена</th>
-                        <th>Удалить</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in cart_items %}
-                    <tr>
-                        <td>{{ item.product.name }}</td>
-                        <td>{{ item.size }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.total_price }} ₽</td>
-                        <td>
-                            <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash-alt"></i> Удалить
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            {% if cart_items %}
+                <h4 class="mt-5">Товары:</h4>
+                <table class="custom-cart-table">
+                    <thead>
+                        <tr>
+                            <th>Товар</th>
+                            <th>Размер</th>
+                            <th>Количество</th>
+                            <th>Цена</th>
+                            <th>Удалить</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.size }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.total_price }} ₽</td>
+                            <td>
+                                <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Удалить
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
 
             {% if seat_reservations %}
                 <h4 class="mt-5">Забронированные места:</h4>

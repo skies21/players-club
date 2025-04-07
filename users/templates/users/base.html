@@ -32,38 +32,46 @@
     </div>
     {% endif %}
 
-    <nav>
-        <nav>
-            <a class="nav-button" href="{% url 'home' %}">Главная</a>
-            <a class="nav-button" href="{% url 'shop' %}">Магазин</a>
-            <a class="nav-button" href="{% url 'match_schedule' %}">Расписание матчей</a>
-            {% if user.is_authenticated %}
-                {% if user.role == 'director' %}
-                    <a class="nav-button" href="{% url 'finances' %}">Финансы</a>
-                    <a class="nav-button" href="{% url 'search' %}">Поиск</a>
-                    <a class="nav-button" href="{% url 'index' %}">Список игроков</a>
-                    <a class="nav-button" href="{% url 'position' %}">Список позиций</a>
-                    <a class="nav-button" href="{% url 'medcine' %}">Медицинский центр</a>
-                {% elif user.role == 'coach' %}
-                    <a class="nav-button" href="{% url 'search' %}">Поиск</a>
-                    <a class="nav-button" href="{% url 'index' %}">Список игроков</a>
-                    <a class="nav-button" href="{% url 'position' %}">Список позиций</a>
-                    <a class="nav-button" href="{% url 'medcine' %}">Медицинский центр</a>
-                {% elif user.role == 'guest' %}
-                {% endif %}
-            {% endif %}
-            <div class="auth-block d-flex align-items-center">
-                {% if user.is_authenticated %}
-                    <span class="text-white me-3">Привет, {{ user.username }}</span>
-                    <a class="nav-button btn btn-outline-light" href="{% url 'logout' %}">Выход</a>
-                {% else %}
-                    <a class="nav-button btn btn-outline-light me-2" href="{% url 'login' %}">Вход</a>
-                    <a class="nav-button btn btn-outline-light me-2" href="{% url 'register' %}">Регистрация</a>
-                {% endif %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-3 shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">⚽ PLAYERS CLUB</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'shop' %}">Магазин</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'match_schedule' %}">Расписание матчей</a></li>
+
+                    {% if user.is_authenticated %}
+                        {% if user.role == 'director' %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'finances' %}">Финансы</a></li>
+                        {% endif %}
+                        {% if user.role == 'director' or user.role == 'coach' %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'search' %}">Поиск</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Игроки</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'position' %}">Позиции</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'medcine' %}">Медицинский центр</a></li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+
+                <div class="d-flex align-items-center">
+                    {% if user.is_authenticated %}
+                        <span class="text-white me-3">👋 Привет, {{ user.username }}</span>
+                        <a href="{% url 'cart' %}" class="btn btn-outline-light me-2">
+                            🛒 Корзина
+                        </a>
+                        <a href="{% url 'logout' %}" class="btn btn-danger">Выход</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-light me-2">Вход</a>
+                        <a href="{% url 'register' %}" class="btn btn-outline-light">Регистрация</a>
+                    {% endif %}
+                </div>
             </div>
-        </nav>
-        {% block nav %}
-        {% endblock %}
+        </div>
     </nav>
     <main>
         {% block content %} {% endblock %}

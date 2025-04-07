@@ -61,7 +61,6 @@ class Match(models.Model):
     team1 = models.CharField(max_length=100, verbose_name='Команда 1')
     team2 = models.CharField(max_length=100, verbose_name='Команда 2')
     match_date = models.DateTimeField(verbose_name='Дата и время матча')
-    ticket_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена билета')
 
     def __str__(self):
         return f'{self.team1} vs {self.team2} - {self.match_date}'
@@ -72,7 +71,8 @@ class Sector(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название сектора")
     image = models.ImageField(upload_to='sectors/', null=True, blank=True, verbose_name="Изображение сектора")
     price = models.IntegerField(verbose_name="Цена билета")
-    total_seats = models.PositiveIntegerField(default=100, verbose_name="Всего мест")
+    rows = models.PositiveIntegerField(default=10, verbose_name="Количество рядов")
+    seats_per_row = models.PositiveIntegerField(default=10, verbose_name="Мест в ряду")
 
     def __str__(self):
         return f"{self.name} — {self.match}"
@@ -80,13 +80,14 @@ class Sector(models.Model):
 
 class SeatReservation(models.Model):
     sector = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='reservations')
-    seat_number = models.PositiveIntegerField()
+    row_number = models.PositiveIntegerField(verbose_name="Ряд")
+    seat_number = models.PositiveIntegerField(verbose_name="Место в ряду")
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     reserved_at = models.DateTimeField(auto_now_add=True)
-    order = models.ForeignKey('Order', null=True, blank=True, on_delete=models.SET_NULL, related_name='seats')
+    order = models.ForeignKey(Order, null=True, blank=True, on_delete=models.SET_NULL, related_name='seats')
 
     class Meta:
-        unique_together = ('sector', 'seat_number')
+        unique_together = ('sector', 'row_number', 'seat_number')
 
     def __str__(self):
-        return f"Место {self.seat_number} — {self.user} — {self.sector}"
+        return f"Ряд {self.row_number}, место {self.seat_number} — {self.user} — {self.sector}"

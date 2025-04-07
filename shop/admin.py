@@ -10,6 +10,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(CartItem)
 admin.site.register(Sector)
+admin.site.register(SeatReservation)
 
 
 class OrderedItemInline(admin.TabularInline):
@@ -23,8 +24,8 @@ class SeatReservationInline(admin.TabularInline):
     extra = 0
     verbose_name = "Билет"
     verbose_name_plural = "Билеты"
-    fields = ('sector', 'seat_number', 'reserved_at')
-    readonly_fields = ('sector', 'seat_number', 'reserved_at')
+    fields = ('sector', 'row_number', 'seat_number', 'reserved_at')
+    readonly_fields = ('sector', 'row_number', 'seat_number', 'reserved_at')
     can_delete = False
 
     def get_queryset(self, request):

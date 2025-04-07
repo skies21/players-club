@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, Http404
@@ -7,6 +9,8 @@ from django.views.generic import ListView, DetailView
 
 from .forms import MatchForm
 from .models import Product, CartItem, Order, Match, Sector, SeatReservation, OrderedItem
+
+import json
 
 
 class ShopView(ListView):
@@ -43,7 +47,10 @@ def cart_view(request):
     cart_items = CartItem.objects.filter(user=request.user)
     seat_reservations = SeatReservation.objects.filter(user=request.user)
 
-    total_price = sum(item.total_price() for item in cart_items)
+    total_cart_price = sum(item.total_price() for item in cart_items)
+    total_seats_price = sum(seat.sector.price for seat in seat_reservations)
+
+    total_price = total_cart_price + total_seats_price
 
     return render(request, 'shop/cart.html', {
         'cart_items': cart_items,
@@ -98,7 +105,6 @@ def checkout(request):
 
         # Привязываем забронированные места к заказу
         seat_reservations.update(order=order)
-        seat_reservations.delete()
 
         # Очищаем корзину
         cart_items.delete()
@@ -174,29 +180,43 @@ def match_sectors(request, match_id):
     return render(request, 'shop/match_sectors.html', {'match': match, 'sectors': sectors})
 
 
+@login_required
 def select_seat(request, sector_id):
     sector = get_object_or_404(Sector, id=sector_id)
-    taken_seats = set(sector.reservations.values_list('seat_number', flat=True))
-    all_seats = list(range(1, sector.total_seats + 1))
-    return render(request, 'shop/select_seat.html', {
+    reservations = sector.reservations.all()
+    taken_seats = defaultdict(list)
+    for r in reservations:
+        taken_seats[r.row_number].append(r.seat_number)
+
+    context = {
         'sector': sector,
-        'all_seats': all_seats,
-        'taken_seats': taken_seats,
-    })
+        'taken_seats_json': json.dumps(taken_seats),
+        'row_numbers': range(1, sector.rows + 1),
+    }
+
+    return render(request, 'shop/select_seat.html', context)
 
 
 def add_seat_to_cart(request, sector_id):
     if request.method == 'POST':
-        seat_number = int(request.POST.get('seat_number'))
+        try:
+            row_number = int(request.POST.get('row_number'))
+            seat_number = int(request.POST.get('seat_number'))
+        except (TypeError, ValueError):
+            messages.error(request, "Неверный ряд или место.")
+            return redirect('match_sectors', match_id=sector_id)
+
         sector = get_object_or_404(Sector, id=sector_id)
-        if SeatReservation.objects.filter(sector=sector, seat_number=seat_number).exists():
-            messages.error(request, "Место уже занято.")
+
+        if SeatReservation.objects.filter(sector=sector, row_number=row_number, seat_number=seat_number).exists():
+            messages.error(request, f"Ряд {row_number}, место {seat_number} уже занято.")
         else:
             SeatReservation.objects.create(
                 sector=sector,
+                row_number=row_number,
                 seat_number=seat_number,
                 user=request.user
             )
-            messages.success(request, f"Место {seat_number} добавлено в корзину.")
+            messages.success(request, f"Ряд {row_number}, место {seat_number} добавлено в корзину.")
 
         return redirect('match_sectors', match_id=sector.match.id)
