@@ -1,18 +1,138 @@
 {% extends 'users/base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center text-white">Финансовая информация</h1>
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card" style="background-color: #2a2a2a; color: white; border-radius: 8px;">
-                <div class="card-body text-center">
-                    <h2 class="card-title">Общая стоимость игроков</h2>
-                    <p class="card-text display-4" style="font-size: 3rem; font-weight: bold;">{{ total_cost }} рублей</p>
-                    <p style="color: white;">Эти данные основываются на расчетах стоимости всех игроков клуба.</p>
+    <h1 class="text-white text-center mb-4">Финансы</h1>
+
+    <!-- Годовой выбор -->
+    <form method="get" class="mb-4 text-center">
+        <select name="year" onchange="this.form.submit()" class="form-select w-auto d-inline-block">
+            {% for y in years %}
+                <option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <!-- Режим редактирования -->
+    <button class="btn btn-outline-light mt-4" data-bs-toggle="collapse" data-bs-target="#editBlock">
+        Режим редактирования
+    </button>
+
+    <!-- График -->
+    <canvas id="profitChart" height="100"></canvas>
+
+    <div class="collapse mt-3 {% if form.errors %}show{% endif %}" id="editBlock">
+        <div class="card card-body bg-dark text-white">
+            <!-- Форма выбора месяца и года (GET) -->
+            <form id="year-month-form" method="get" class="mb-3">
+                <div class="row g-2">
+                    <div class="col">
+                        <label for="edit_year">Год</label>
+                        <select name="edit_year" id="edit_year" class="form-select">
+                            {% for y in years %}
+                                <option value="{{ y }}" {% if y == edit_year %}selected{% endif %}>{{ y }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="edit_month">Месяц</label>
+                        <select name="edit_month" id="edit_month" class="form-select">
+                            {% for num, name in form.fields.month.choices %}
+                                <option value="{{ num }}" {% if num == edit_month %}selected{% endif %}>{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <input type="hidden" name="year" value="{{ year }}">
                 </div>
-            </div>
+            </form>
+
+            <!-- Основная форма (POST) -->
+            <form method="post">
+                {% csrf_token %}
+                {{ form.year.as_hidden }}
+                {{ form.month.as_hidden }}
+
+                <div class="row row-cols-2 row-cols-md-3 g-3">
+                    {% for field in form.visible_fields %}
+                        {% if field.name not in 'year month' %}
+                            <div class="col">
+                                <label>{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <button class="btn btn-success mt-3">Сохранить</button>
+            </form>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('profitChart').getContext('2d');
+
+const profits = {{ profits|safe }};
+
+const backgroundColors = profits.map(profit => profit < 0 ? '#dc3545' : '#198754');
+
+const profitChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        datasets: [{
+            label: 'Прибыль (руб.)',
+            data: profits,
+            backgroundColor: backgroundColors
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const yearSelect = document.getElementById('edit_year');
+    const monthSelect = document.getElementById('edit_month');
+
+    async function fetchFinanceEntry() {
+        const year = yearSelect.value;
+        const month = monthSelect.value;
+        const url = `/finance-entry-data/?year=${year}&month=${month}`;
+
+        try {
+            const response = await fetch(url);
+            const result = await response.json();
+
+            if (result.success) {
+                for (const [key, value] of Object.entries(result.data)) {
+                    const input = document.querySelector(`[name="${key}"]`);
+                    if (input) {
+                        input.value = value;
+                    }
+                }
+            } else {
+                const inputs = document.querySelectorAll('#editBlock input, #editBlock select');
+                inputs.forEach(input => {
+                    if (!['year', 'month', 'csrfmiddlewaretoken'].includes(input.name)) {
+                        input.value = '0';
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Ошибка при загрузке данных:', error);
+        }
+    }
+
+    yearSelect.addEventListener('change', fetchFinanceEntry);
+    monthSelect.addEventListener('change', fetchFinanceEntry);
+});
+</script>
 {% endblock %}

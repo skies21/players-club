@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -65,3 +67,43 @@ class Medcine(models.Model):
 
     def __str__(self):
         return f"{self.full_name}. Травма: {self.injury}. Дата получения травмы: {self.injury_date}. Дата выздоровления: {self.recovery_date}."
+
+
+MONTH_CHOICES = [(i, datetime(2000, i, 1).strftime('%B')) for i in range(1, 13)]
+
+class FinanceEntry(models.Model):
+    year = models.IntegerField()
+    month = models.IntegerField(choices=MONTH_CHOICES)
+
+    # Доходы
+    match_income = models.PositiveIntegerField(default=0)
+    sponsors_income = models.PositiveIntegerField(default=0)
+    transfers_income = models.PositiveIntegerField(default=0)
+    prize_income = models.PositiveIntegerField(default=0)
+    merch_income = models.PositiveIntegerField(default=0)
+    other_income = models.PositiveIntegerField(default=0)
+
+    # Расходы
+    transfers_expense = models.PositiveIntegerField(default=0)
+    salary_expense = models.PositiveIntegerField(default=0)
+    academy_expense = models.PositiveIntegerField(default=0)
+    infra_expense = models.PositiveIntegerField(default=0)
+    merch_expense = models.PositiveIntegerField(default=0)
+
+    @property
+    def total_income(self):
+        return (self.match_income + self.sponsors_income + self.transfers_income +
+                self.prize_income + self.merch_income + self.other_income)
+
+    @property
+    def total_expense(self):
+        return (self.transfers_expense + self.salary_expense +
+                self.academy_expense + self.infra_expense + self.merch_expense)
+
+    @property
+    def profit(self):
+        return self.total_income - self.total_expense
+
+    class Meta:
+        unique_together = ('year', 'month')
+        ordering = ['year', 'month']

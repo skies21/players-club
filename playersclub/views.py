@@ -1,7 +1,11 @@
+from datetime import datetime
+
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.timezone import now
 from django.views.generic.edit import UpdateView
 from django.views import View
 from django.urls import reverse_lazy
@@ -9,8 +13,9 @@ from django.db.models import Sum
 from django.views.generic import TemplateView
 from django.contrib import messages
 
-from users.forms import PlayerForm, EditForm, EditPositionForm, PositionForm, MedcineForm, RegisterForm
-from users.models import Player, Position, Medcine
+from users.forms import PlayerForm, EditForm, EditPositionForm, PositionForm, MedcineForm, RegisterForm, \
+    FinanceEntryForm
+from users.models import Player, Position, Medcine, FinanceEntry
 
 
 class IndexView(UserPassesTestMixin, TemplateView):
@@ -258,11 +263,67 @@ class FinancesView(UserPassesTestMixin, View):
         return self.request.user.is_authenticated and self.request.user.is_director()
 
     def get(self, request):
-        total_cost = calculate_total_cost()
+        year = int(request.GET.get('year', now().year))
+        edit_year = int(request.GET.get('edit_year', now().year))
+        edit_month = int(request.GET.get('edit_month', now().month))
+
+        entries = FinanceEntry.objects.filter(year=year)
+        months_data = {entry.month: entry for entry in entries}
+        profits = [months_data.get(i).profit if i in months_data else 0 for i in range(1, 13)]
+
+        try:
+            entry = FinanceEntry.objects.get(year=edit_year, month=edit_month)
+            form = FinanceEntryForm(instance=entry)
+        except FinanceEntry.DoesNotExist:
+            form = FinanceEntryForm(initial={'year': edit_year, 'month': edit_month})
+
         context = {
-            'total_cost': total_cost
+            'year': year,
+            'profits': profits,
+            'months_data': months_data,
+            'form': form,
+            'edit_year': edit_year,
+            'edit_month': edit_month,
+            'years': range(now().year - 5, now().year + 2),
         }
-        return render(request, 'users/finances.html', context)
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        edit_year = request.POST.get('year')
+        edit_month = request.POST.get('month')
+        instance = FinanceEntry.objects.filter(year=edit_year, month=edit_month).first()
+        form = FinanceEntryForm(request.POST, instance=instance)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Запись успешно сохранена.")
+        else:
+            messages.error(request, "Ошибка при сохранении записи.")
+
+        return redirect(f"{request.path}?year={edit_year}&edit_year={edit_year}&edit_month={edit_month}")
+
+
+class FinanceEntryDataView(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_director()
+
+    def get(self, request):
+        year = request.GET.get('year')
+        month = request.GET.get('month')
+
+        entry, created = FinanceEntry.objects.get_or_create(
+            year=year,
+            month=month,
+            defaults={field.name: 0 for field in FinanceEntry._meta.fields if field.name not in ['id', 'year', 'month']}
+        )
+
+        data = {
+            field.name: getattr(entry, field.name)
+            for field in FinanceEntry._meta.fields
+            if field.name not in ['id']
+        }
+
+        return JsonResponse({'success': True, 'data': data})
 
 
 def register_view(request):

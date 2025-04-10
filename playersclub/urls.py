@@ -3,7 +3,8 @@ from django.urls import path, include
 from . import views
 from playersclub.views import IndexView, SearchView, AddRecordView, EditRecordView, IndexPositionView, \
     EditRecordPositionView, AddRecordPositionView, delete_record, delete_record_position, HomeView, \
-    AddRecordMedcineView, EditRecordMedcineView, MedcineView, FinancesView, DeleteRecordMedcineView
+    AddRecordMedcineView, EditRecordMedcineView, MedcineView, FinancesView, DeleteRecordMedcineView, \
+    FinanceEntryDataView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,4 +32,5 @@ urlpatterns = [
     path('medcine/edit/<int:pk>/', EditRecordMedcineView.as_view(), name='edit_record_medcine'),
     path('medcine/delete/<int:pk>/', DeleteRecordMedcineView.as_view(), name='delete_record_medcine'),
     path('finances/', FinancesView.as_view(), name='finances'),
+    path('finance-entry-data/', FinanceEntryDataView.as_view(), name='finance-entry-data'),
 ]

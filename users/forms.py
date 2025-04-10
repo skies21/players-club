@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms import DateInput
+from django.utils.timezone import now
 
-from users.models import Player, Position, Medcine, CustomUser
+from users.models import Player, Position, Medcine, CustomUser, FinanceEntry, MONTH_CHOICES
 import datetime
 
 
@@ -117,3 +118,19 @@ class LoginForm(AuthenticationForm):
         label="Пароль",
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Введите пароль'})
     )
+
+
+class FinanceEntryForm(forms.ModelForm):
+    class Meta:
+        model = FinanceEntry
+        fields = '__all__'
+        widgets = {
+            'year': forms.Select(choices=[(y, y) for y in range(now().year - 5, now().year + 2)],
+                                 attrs={'class': 'form-select'}),
+            'month': forms.Select(choices=MONTH_CHOICES, attrs={'class': 'form-select'}),
+            **{
+                field.name: forms.NumberInput(attrs={'class': 'form-control', 'min': 0})
+                for field in FinanceEntry._meta.fields
+                if field.name not in ['id', 'year', 'month']
+            }
+        }

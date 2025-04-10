@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Position, Player, FullName, Medcine, CustomUser
+from .models import Position, Player, FullName, Medcine, CustomUser, FinanceEntry
 
 
 class PositionAdmin(admin.ModelAdmin):
@@ -27,3 +27,9 @@ admin.site.register(Player, PlayerAdmin)
 admin.site.register(FullName, FullNameAdmin)
 admin.site.register(Medcine, MedcineAdmin)
 admin.site.register(CustomUser)
+
+
+@admin.register(FinanceEntry)
+class FinanceEntryAdmin(admin.ModelAdmin):
+    list_display = ['year', 'month', 'total_income', 'total_expense', 'profit']
+    list_filter = ['year']
