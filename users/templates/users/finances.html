@@ -7,6 +7,7 @@
 
     <!-- Годовой выбор -->
     <form method="get" class="mb-4 text-center">
+        {% csrf_token %}
         <select name="year" onchange="this.form.submit()" class="form-select w-auto d-inline-block">
             {% for y in years %}
                 <option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>
@@ -15,45 +16,63 @@
     </form>
 
     <!-- Режим редактирования -->
-    <button class="btn btn-outline-light mt-4" data-bs-toggle="collapse" data-bs-target="#editBlock">
+    <button class="btn btn-outline-light mt-4" style="margin-bottom: 10px" data-bs-toggle="collapse" data-bs-target="#editBlock">
         Режим редактирования
     </button>
 
-    <!-- График -->
-    <canvas id="profitChart" height="100"></canvas>
+    <!-- Общие показатели за год -->
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-success h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Доходы</h5>
+                    <p class="card-text fs-4">{{ total_income|floatformat:0 }} ₽</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-danger h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Расходы</h5>
+                    <p class="card-text fs-4">{{ total_expense|floatformat:0 }} ₽</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white {% if total_profit >= 0 %}bg-primary{% else %}bg-warning{% endif %} h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Прибыль</h5>
+                    <p class="card-text fs-4">{{ total_profit|floatformat:0 }} ₽</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="collapse mt-3 {% if form.errors %}show{% endif %}" id="editBlock">
         <div class="card card-body bg-dark text-white">
-            <!-- Форма выбора месяца и года (GET) -->
-            <form id="year-month-form" method="get" class="mb-3">
+            <!-- Основная форма (POST) -->
+            <form method="post">
+                {% csrf_token %}
                 <div class="row g-2">
                     <div class="col">
-                        <label for="edit_year">Год</label>
-                        <select name="edit_year" id="edit_year" class="form-select">
+                        <label for="year">Год</label>
+                        <select name="year" id="year" class="form-select">
                             {% for y in years %}
                                 <option value="{{ y }}" {% if y == edit_year %}selected{% endif %}>{{ y }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="col">
-                        <label for="edit_month">Месяц</label>
-                        <select name="edit_month" id="edit_month" class="form-select">
+                        <label for="month">Месяц</label>
+                        <select name="month" id="month" class="form-select">
                             {% for num, name in form.fields.month.choices %}
                                 <option value="{{ num }}" {% if num == edit_month %}selected{% endif %}>{{ name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <input type="hidden" name="year" value="{{ year }}">
                 </div>
-            </form>
 
-            <!-- Основная форма (POST) -->
-            <form method="post">
-                {% csrf_token %}
-                {{ form.year.as_hidden }}
-                {{ form.month.as_hidden }}
-
-                <div class="row row-cols-2 row-cols-md-3 g-3">
+                <div class="row row-cols-2 row-cols-md-3 g-3 mt-3">
                     {% for field in form.visible_fields %}
                         {% if field.name not in 'year month' %}
                             <div class="col">
@@ -63,10 +82,14 @@
                         {% endif %}
                     {% endfor %}
                 </div>
+
                 <button class="btn btn-success mt-3">Сохранить</button>
             </form>
         </div>
     </div>
+
+    <!-- График -->
+    <canvas id="profitChart" height="100"></canvas>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

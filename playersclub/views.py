@@ -271,6 +271,26 @@ class FinancesView(UserPassesTestMixin, View):
         months_data = {entry.month: entry for entry in entries}
         profits = [months_data.get(i).profit if i in months_data else 0 for i in range(1, 13)]
 
+        income_agg = entries.aggregate(
+            match=Sum('match_income'),
+            sponsors=Sum('sponsors_income'),
+            transfers=Sum('transfers_income'),
+            prize=Sum('prize_income'),
+            merch=Sum('merch_income'),
+            other=Sum('other_income'),
+        )
+        expense_agg = entries.aggregate(
+            transfers=Sum('transfers_expense'),
+            salary=Sum('salary_expense'),
+            academy=Sum('academy_expense'),
+            infra=Sum('infra_expense'),
+            merch=Sum('merch_expense'),
+        )
+
+        total_income = sum(value or 0 for value in income_agg.values()) if income_agg else 0
+        total_expense = sum(value or 0 for value in expense_agg.values()) if expense_agg else 0
+        total_profit = total_income - total_expense
+
         try:
             entry = FinanceEntry.objects.get(year=edit_year, month=edit_month)
             form = FinanceEntryForm(instance=entry)
@@ -285,13 +305,18 @@ class FinancesView(UserPassesTestMixin, View):
             'edit_year': edit_year,
             'edit_month': edit_month,
             'years': range(now().year - 5, now().year + 2),
+            'total_income': total_income,
+            'total_expense': total_expense,
+            'total_profit': total_profit,
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
         edit_year = request.POST.get('year')
         edit_month = request.POST.get('month')
+
         instance = FinanceEntry.objects.filter(year=edit_year, month=edit_month).first()
+
         form = FinanceEntryForm(request.POST, instance=instance)
 
         if form.is_valid():
