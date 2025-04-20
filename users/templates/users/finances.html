@@ -1,4 +1,5 @@
 {% extends 'users/base.html' %}
+{% load finance_extras %}
 {% load static %}
 
 {% block content %}
@@ -26,7 +27,7 @@
             <div class="card text-white bg-success h-100">
                 <div class="card-body">
                     <h5 class="card-title">Доходы</h5>
-                    <p class="card-text fs-4">{{ total_income|floatformat:0 }} ₽</p>
+                    <p class="card-text fs-4">{{ total_income|space_intformat }} ₽</p>
                 </div>
             </div>
         </div>
@@ -34,15 +35,18 @@
             <div class="card text-white bg-danger h-100">
                 <div class="card-body">
                     <h5 class="card-title">Расходы</h5>
-                    <p class="card-text fs-4">{{ total_expense|floatformat:0 }} ₽</p>
+                    <p class="card-text fs-4">{{ total_expense|space_intformat }} ₽</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-white {% if total_profit >= 0 %}bg-primary{% else %}bg-warning{% endif %} h-100">
+            <div class="card bg-secondary text-white h-100">
                 <div class="card-body">
                     <h5 class="card-title">Прибыль</h5>
-                    <p class="card-text fs-4">{{ total_profit|floatformat:0 }} ₽</p>
+                    <p class="card-text fs-4"
+                       style="color: {% if total_profit >= 0 %}#28ff28{% else %}#ff4d4f{% endif %};">
+                        {{ total_profit|space_intformat }} ₽
+                    </p>
                 </div>
             </div>
         </div>
@@ -122,8 +126,8 @@ const profitChart = new Chart(ctx, {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const yearSelect = document.getElementById('edit_year');
-    const monthSelect = document.getElementById('edit_month');
+    const yearSelect = document.getElementById('year');
+    const monthSelect = document.getElementById('month');
 
     async function fetchFinanceEntry() {
         const year = yearSelect.value;
@@ -154,8 +158,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    yearSelect.addEventListener('change', fetchFinanceEntry);
-    monthSelect.addEventListener('change', fetchFinanceEntry);
+    if (yearSelect && monthSelect) {
+        yearSelect.addEventListener('change', fetchFinanceEntry);
+        monthSelect.addEventListener('change', fetchFinanceEntry);
+    } else {
+        console.warn('Не найдены селекты для года и месяца');
+    }
 });
 </script>
 {% endblock %}
