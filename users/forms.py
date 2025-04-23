@@ -10,7 +10,8 @@ import datetime
 class PlayerForm(forms.ModelForm):
     class Meta:
         model = Player
-        fields = ['surname', 'firstname', 'patronymic', 'age', 'position', 'cost', 'expiration_date', 'injury_choice', 'injury_date', 'recovery_date']
+        fields = ['surname', 'firstname', 'patronymic', 'age', 'position', 'cost', 'expiration_date', 'injury_choice',
+                  'injury_date', 'recovery_date']
         widgets = {
             'injury_date': DateInput(attrs={'type': 'date', 'class': 'datepicker'}),
             'recovery_date': DateInput(attrs={'type': 'date', 'class': 'datepicker'}),
@@ -24,6 +25,16 @@ class PlayerForm(forms.ModelForm):
             'injury_date': ['%Y-%m-%d'],
             'recovery_date': ['%Y-%m-%d'],
         }
+
+    surname = forms.CharField(required=False)
+    firstname = forms.CharField(required=False)
+    patronymic = forms.CharField(required=False)
+    age = forms.IntegerField(required=False)
+    cost = forms.IntegerField(required=False)
+    expiration_date = forms.DateField(required=False)
+    injury_choice = forms.ChoiceField(choices=Player.INJURY_CHOICES, required=False)
+    injury_date = forms.DateField(required=False)
+    recovery_date = forms.DateField(required=False)
 
     def clean_expiration_date(self):
         expiration_date = self.cleaned_data.get('expiration_date')

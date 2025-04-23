@@ -43,7 +43,7 @@ class SearchView(UserPassesTestMixin, View):
     results_template_name = 'users/search_result.html'
 
     def test_func(self):
-        return self.request.user.is_authenticated and self.request.user.is_director() or self.request.user.is_coach()
+        return self.request.user.is_authenticated and (self.request.user.is_director() or self.request.user.is_coach())
 
     def get(self, request, *args, **kwargs):
         form = PlayerForm()
@@ -76,14 +76,16 @@ class SearchView(UserPassesTestMixin, View):
             if form.cleaned_data['expiration_date']:
                 search_results = search_results.filter(expiration_date=form.cleaned_data['expiration_date'])
 
-            if form.cleaned_data['injury_choice']:
-                search_results = search_results.filter(expiration_date=form.cleaned_data['injury_choice'])
+            injury_choice = form.cleaned_data['injury_choice']
+            if injury_choice:
+                if injury_choice != '':
+                    search_results = search_results.filter(injury_choice=injury_choice)
 
             if form.cleaned_data['injury_date']:
-                search_results = search_results.filter(expiration_date=form.cleaned_data['injury_date'])
+                search_results = search_results.filter(injury_date=form.cleaned_data['injury_date'])
 
             if form.cleaned_data['recovery_date']:
-                search_results = search_results.filter(expiration_date=form.cleaned_data['recovery_date'])
+                search_results = search_results.filter(recovery_date=form.cleaned_data['recovery_date'])
 
             if not search_results.exists():
                 return render(request, self.results_template_name, {'no_results': True})
@@ -91,6 +93,7 @@ class SearchView(UserPassesTestMixin, View):
             return render(request, self.results_template_name, {'results': search_results})
 
         return render(request, self.template_name, {'form': form})
+
 
 class AddRecordView(View):
     template_name = 'users/add_record.html'

@@ -31,6 +31,7 @@ class Position(models.Model):
 
 class Player(models.Model):
     INJURY_CHOICES = (
+        ('', '—'),
         ('да', 'ДА'),
         ('нет', 'НЕТ'),
     )
@@ -39,7 +40,7 @@ class Player(models.Model):
     surname = models.CharField(max_length=20)
     patronymic = models.CharField(max_length=20)
     age = models.PositiveIntegerField(default=0)
-    position = models.ForeignKey(to=Position, on_delete=models.CASCADE)
+    position = models.ForeignKey(to=Position, on_delete=models.CASCADE, null=True, blank=True)
     cost = models.PositiveIntegerField(default=0)
     expiration_date = models.DateField(default='2031-01-01')
     injury_choice = models.CharField(max_length=20, choices=INJURY_CHOICES, default='Нет')

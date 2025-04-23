@@ -1,16 +1,9 @@
 {% extends 'users/base.html' %}
 
-<body>
-    {% block nav%}
-    <ul class="nav-list">
-        <li><a class="nav-button" href="{% url 'index' %}">Назад</a></li>
-    </ul>
-    {% endblock %}
-
-    {% block content%}
+{% block content %}
     {% if results %}
     <h2>Результаты поиска</h2>
-    <table>
+    <table
         <thead>
             <tr>
                 <th>ID</th>
@@ -43,11 +36,8 @@
             </tr>
             {% endfor %}
         </tbody>
-
-        {% else %}
-        <p>Ничего не найдено</p>
-        {% endif %}
-        {% endblock %}
-</body>
-
-</html>
+    </table>
+    {% else %}
+    <p>Ничего не найдено</p>
+    {% endif %}
+{% endblock %}
