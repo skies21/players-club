@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms import DateInput
 from django.utils.timezone import now
 
-from users.models import Player, Position, Medcine, CustomUser, FinanceEntry, MONTH_CHOICES
+from users.models import Player, Position, Medcine, CustomUser, FinanceEntry, MONTH_CHOICES, Comment
 import datetime
 
 
@@ -144,4 +144,13 @@ class FinanceEntryForm(forms.ModelForm):
                 for field in FinanceEntry._meta.fields
                 if field.name not in ['id', 'year', 'month']
             }
+        }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Напишите комментарий...'})
         }

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Position, Player, FullName, Medcine, CustomUser, FinanceEntry
+from .models import Position, Player, FullName, Medcine, CustomUser, FinanceEntry, News, Comment
 
 
 class PositionAdmin(admin.ModelAdmin):
@@ -27,6 +27,8 @@ admin.site.register(Player, PlayerAdmin)
 admin.site.register(FullName, FullNameAdmin)
 admin.site.register(Medcine, MedcineAdmin)
 admin.site.register(CustomUser)
+admin.site.register(News)
+admin.site.register(Comment)
 
 
 @admin.register(FinanceEntry)

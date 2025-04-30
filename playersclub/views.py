@@ -14,8 +14,8 @@ from django.views.generic import TemplateView
 from django.contrib import messages
 
 from users.forms import PlayerForm, EditForm, EditPositionForm, PositionForm, MedcineForm, RegisterForm, \
-    FinanceEntryForm
-from users.models import Player, Position, Medcine, FinanceEntry
+    FinanceEntryForm, CommentForm
+from users.models import Player, Position, Medcine, FinanceEntry, News
 
 
 class IndexView(UserPassesTestMixin, TemplateView):
@@ -198,8 +198,32 @@ class AddRecordPositionView(View):
 
 class HomeView(View):
     template_name = 'users/home.html'
+
     def get(self, request):
-        return render(request, 'users/home.html')
+        news = News.objects.all().order_by('-published_at')
+        return render(request, self.template_name, {'news_list': news})
+
+
+class NewsDetailView(View):
+    template_name = 'users/news_detail.html'
+
+    def get(self, request, pk):
+        news_item = get_object_or_404(News, pk=pk)
+        comments = news_item.comments.all()
+        form = CommentForm()
+        return render(request, self.template_name, {'news_item': news_item, 'comments': comments, 'form': form})
+
+    def post(self, request, pk):
+        news_item = get_object_or_404(News, pk=pk)
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.news = news_item
+            if request.user.is_authenticated:
+                comment.user = request.user
+            comment.save()
+        comments = news_item.comments.all()
+        return render(request, self.template_name, {'news_item': news_item, 'comments': comments, 'form': form})
 
 
 class MedcineView(UserPassesTestMixin, TemplateView):

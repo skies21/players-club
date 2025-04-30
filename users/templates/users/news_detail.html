@@ -1,0 +1,94 @@
+{% extends 'users/base.html' %}
+
+{% block nav %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="display-4 text-center text-white">{{ news_item.title }}</h1>
+    <p class="text-white text-center">{{ news_item.published_at|date:"d.m.y, H:i" }}</p>
+
+    <!-- Изображение новости -->
+    <div class="text-center mb-4">
+        <img src="{{ news_item.image.url }}" class="img-fluid rounded shadow-lg" alt="{{ news_item.title }}">
+    </div>
+
+    <!-- Контент новости -->
+    <p class="lead text-white">{{ news_item.content }}</p>
+
+    <!-- Форма для комментариев -->
+    <div class="comment-form-container p-4 mt-4 ">
+        <form method="post" class="comment-form">
+            {% csrf_token %}
+            <div class="form-floating mb-3">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-orange w-100">Оставить комментарий</button>
+        </form>
+    </div>
+
+    <!-- Комментарии -->
+    <div class="mt-4">
+        <h4 class="text-white mb-3">Комментарии</h4>
+        {% for comment in comments %}
+        <div class="card mb-2 shadow-sm" style="background-color: #2c2c2c; border-color: #444;">
+            <div class="card-body">
+                <p class="text-white">{{ comment.text }}</p>
+                <small class="text-white">{{ comment.created_at|date:"d.m.y, H:i" }} |
+                    {% if comment.user %}
+                        {{ comment.user.username }}
+                    {% else %}
+                        Anonymous
+                    {% endif %}
+                </small>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">Комментариев пока нет.</p>
+        {% endfor %}
+    </div>
+</div>
+<style>
+/* Основные стили для формы */
+.comment-form-container .form-floating input,
+.comment-form-container .form-floating textarea {
+    background-color: #444 !important;
+    color: #fff !important;
+    border: 1px solid #555 !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    padding: 12px !important;
+    width: 100% !important; /* Сделать поле ввода по ширине кнопки */
+    box-sizing: border-box !important; /* Учитывать паддинг в общей ширине */
+}
+
+/* Убираем надпись перед полем */
+.comment-form-container .form-floating label {
+    display: none !important; /* Убираем метку */
+}
+
+/* Кнопка отправки комментария */
+.comment-form-container button {
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    background-color: #ff6600 !important; /* Оранжевый цвет */
+    border-color: #ff6600 !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    transition: background-color 0.3s ease !important;
+    width: 100% !important; /* Делаем кнопку по ширине формы */
+}
+
+/* Эффект при наведении на кнопку */
+.comment-form-container button:hover {
+    background-color: #e65c00 !important;
+    border-color: #e65c00 !important;
+}
+
+/* Добавление небольшого отступа для поля ввода */
+.comment-form-container .form-floating {
+    margin-bottom: 15px !important;
+}
+</style>
+{% endblock %}
