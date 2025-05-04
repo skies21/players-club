@@ -36,6 +36,23 @@ class PlayerForm(forms.ModelForm):
     injury_date = forms.DateField(required=False)
     recovery_date = forms.DateField(required=False)
 
+    def clean(self):
+        cleaned_data = super().clean()
+        injury_choice = cleaned_data.get('injury_choice')
+        injury_date = cleaned_data.get('injury_date')
+        recovery_date = cleaned_data.get('recovery_date')
+
+        if injury_choice == 'yes':
+            if not injury_date:
+                self.add_error('injury_date', "Укажите дату получения травмы")
+            if not recovery_date:
+                self.add_error('recovery_date', "Укажите дату выздоровления")
+            if injury_date and recovery_date and injury_date > recovery_date:
+                self.add_error('recovery_date', "Дата выздоровления не может быть раньше даты травмы")
+        else:
+            cleaned_data['injury_date'] = None
+            cleaned_data['recovery_date'] = None
+
     def clean_expiration_date(self):
         expiration_date = self.cleaned_data.get('expiration_date')
         if expiration_date and expiration_date < datetime.date.today():

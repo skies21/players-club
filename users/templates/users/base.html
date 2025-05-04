@@ -86,5 +86,8 @@
         });
         toastList.forEach(toast => toast.show());
     });
+    document.querySelectorAll('input[type="date"]').forEach(function(input) {
+        input.setAttribute('placeholder', 'YYYY-MM-DD');
+    });
 </script>
 </html>

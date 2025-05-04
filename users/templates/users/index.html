@@ -29,10 +29,10 @@
             <td>{{ task.age }}</td>
             <td>{{ task.position.name }}</td>
             <td>{{ task.cost }}</td>
-            <td>{{ task.expiration_date }}</td>
-            <td>{{ task.injury_choice }}</td>
-            <td>{{ task.injury_date }}</td>
-            <td>{{ task.recovery_date }}</td>
+            <td>{% if task.expiration_date %}{{ task.expiration_date }}{% else %}—{% endif %}</td>
+            <td>{% if task.injury_choice %}{{ task.injury_choice }}{% else %}—{% endif %}</td>
+            <td>{% if task.injury_date %}{{ task.injury_date }}{% else %}—{% endif %}</td>
+            <td>{% if task.recovery_date %}{{ task.recovery_date }}{% else %}—{% endif %}</td>
             <td class="button-cell">
                 <a class="btn delete-btn" href="{% url 'delete_record' pk=task.pk %}" type="submit">Удалить</a>
                 <a class="btn edit-btn" href="{% url 'edit_record' pk=task.pk %}" type="submit">Изменить</a>
