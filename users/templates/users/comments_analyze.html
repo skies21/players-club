@@ -1,0 +1,62 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .gray-card {
+        background-color: #444;
+        border: none;
+    }
+    .gray-card:hover {
+        background-color: #333;
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4 text-white">Анализ комментариев</h1>
+
+    <!-- Отображение смайлика для тональности -->
+    <div class="row text-center mt-4">
+        <div class="col-md-12">
+            <div class="card text-white gray-card">
+                <div class="card-body">
+                    <h5 class="card-title">Тональность комментариев</h5>
+                    <p class="card-text fs-4" id="sentimentEmoticon">
+                        {% if sentiment == 'Крайне позитивная' %}
+                            😊
+                        {% elif sentiment == 'Позитивная' %}
+                            🙂
+                        {% elif sentiment == 'Нейтральная' %}
+                            😐
+                        {% elif sentiment == 'Негативная' %}
+                            🙁
+                        {% else %}
+                            😞
+                        {% endif %}
+                    </p>
+                    <p class="card-text fs-5">Тональность: {{ sentiment }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Анализ лояльности -->
+    <div class="row text-center mt-4">
+        <div class="col-md-12">
+            <div class="card text-white gray-card">
+                <div class="card-body">
+                    <h5 class="card-title">Лояльность комментаторов</h5>
+                    <p class="card-text fs-4" id="loyaltyEmoticon">
+                        {% if loyalty == 'Высокая' %}
+                            ❤️
+                        {% else %}
+                            💔
+                        {% endif %}
+                    </p>
+                    <p class="card-text fs-5">Лояльность: {{ loyalty }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
