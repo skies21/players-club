@@ -16,26 +16,41 @@ def predict_sentiment(text):
     return predicted_class
 
 def analyze_comments(request):
-    comments = Comment.objects.all()
+    comments = Comment.objects.order_by('-created_at')[:5]
     comment_texts = [comment.text for comment in comments]
+
+    if not comment_texts:
+        context = {
+            'sentiment': 'Нет комментариев',
+            'loyalty': 'Нет данных',
+            'avg_score': '-',
+            'total_comments': 0
+        }
+        return render(request, 'users/comments_analyze.html', context)
 
     sentiments = [predict_sentiment(text) for text in comment_texts]
 
-    positive_count = sentiments.count(4)
-    total_comments = len(sentiments)
-    if total_comments:
-        loyalty = 'Высокая' if positive_count / total_comments > 0.5 else 'Низкая'
+    avg_score = sum(sentiments) / len(sentiments)
+
+    if avg_score >= 4.5:
+        sentiment = 'Крайне позитивная'
+    elif avg_score >= 3.5:
+        sentiment = 'Позитивная'
+    elif avg_score >= 2.5:
+        sentiment = 'Нейтральная'
+    elif avg_score >= 1.5:
+        sentiment = 'Негативная'
     else:
-        loyalty = 'Высокая'
+        sentiment = 'Крайне негативная'
 
-    last_sentiment = sentiments[-1] if sentiments else 0
-
-    sentiment_labels = ['Крайне негативная', 'Негативная', 'Нейтральная', 'Позитивная', 'Крайне позитивная']
-    sentiment_text = sentiment_labels[last_sentiment]
+    positive_count = sum(1 for score in sentiments if score >= 4)
+    loyalty = 'Высокая' if positive_count > len(sentiments) / 2 else 'Низкая'
 
     context = {
-        'sentiment': sentiment_text,  # Последний прогноз для тональности
-        'loyalty': loyalty,           # Лояльность на основе позитивных комментариев
+        'sentiment': sentiment,
+        'loyalty': loyalty,
+        'avg_score': round(avg_score, 2),
+        'total_comments': len(sentiments)
     }
 
     return render(request, 'users/comments_analyze.html', context)
